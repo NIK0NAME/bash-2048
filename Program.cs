@@ -78,7 +78,7 @@ class Program
 
             for (int col = 0; col < Program.cols; col++) {
                 int value = Program.board[row][col];
-  
+
                 if (col == 0) {
                     Console.Write($"|");
                     Console.BackgroundColor = (ConsoleColor)(value % 14);
@@ -105,29 +105,90 @@ class Program
 
     static void calcBoard(ConsoleKey dir) {
         switch (dir) {
+            case ConsoleKey.RightArrow:
             case ConsoleKey.LeftArrow: {
+                int startFrom = ConsoleKey.LeftArrow == dir ? 1 : Program.cols - 2;
+                int goTo = ConsoleKey.LeftArrow == dir ?  Program.cols : 0;
+                int goDirection =  ConsoleKey.LeftArrow == dir ? +1 : -1;
+
                 for (int row = 0; row < Program.rows; row++) {
-                    for (int col = 1; col < Program.cols; col++) {
+                    for (
+                        int col = startFrom;
+                        ConsoleKey.LeftArrow == dir ? col < Program.cols : col >= 0 ;
+                        col += goDirection
+                    ) {
                         int value = Program.board[row][col];
-                        int valuesPos = col;
+
                         if (value != 0) {
-                            Program.board[row][col] = 0;
-                            while(valuesPos > 0) {
-                                valuesPos--;
-                                int nextValue = Program.board[row][valuesPos];
-                                if (nextValue == 0 || nextValue == value) {
-                                    value = nextValue + value;
+                            bool previousMerge = false;
+                            int prevPos = col - goDirection;
+                            // Program.board[row][col] = 0;
+
+                            for (
+                                int prev = prevPos;
+                                ConsoleKey.LeftArrow == dir ? prev >= 0 : prev <= Program.cols - 1;
+                                prev -= goDirection
+                            ) {
+                                if (Program.board[row][prev] == 0) {
+                                    Program.board[row][prev + goDirection] = 0;
+                                    Program.board[row][prev] = value;
+                                } else {
+                                    if (Program.board[row][prev] == value && !previousMerge) {
+                                        previousMerge = true;
+                                        value = Program.board[row][prev] + value;
+                                        Program.board[row][prev + goDirection] = 0;
+                                        Program.board[row][prev] = value;
+                                    } else {
+                                        break;
+                                    }
                                 }
                             }
-
-                            Program.board[row][valuesPos] = value;
                         }
                     }
                 }
             } break;
-            case ConsoleKey.RightArrow: break;
-            case ConsoleKey.UpArrow: break;
-            case ConsoleKey.DownArrow: break;
+            case ConsoleKey.UpArrow:
+            case ConsoleKey.DownArrow: {
+                int startFrom = ConsoleKey.UpArrow == dir ? 1 : Program.cols - 2;
+                int goTo = ConsoleKey.UpArrow == dir ?  Program.cols : 0;
+                int goDirection =  ConsoleKey.UpArrow == dir ? +1 : -1;
+
+                for (int col = 0; col < Program.rows; col++) {
+                    for (
+                        int row = startFrom;
+                        ConsoleKey.UpArrow == dir ? row < Program.cols : row >= 0 ;
+                        row += goDirection
+                    ) {
+                        int value = Program.board[row][col];
+
+                        if (value != 0) {
+                            bool previousMerge = false;
+                            int prevPos = col - goDirection;
+                            // Program.board[row][col] = 0;
+
+                            for (
+                                int prev = prevPos;
+                                ConsoleKey.UpArrow == dir ? prev >= 0 : prev <= Program.cols - 1;
+                                prev -= goDirection
+                            ) {
+                                if (Program.board[prev][col] == 0) {
+                                    Program.board[prev + goDirection][col] = 0;
+                                    Program.board[prev][col] = value;
+                                } else {
+                                    if (Program.board[prev][col] == value && !previousMerge) {
+                                        previousMerge = true;
+                                        value = Program.board[prev][col] + value;
+                                        Program.board[prev + goDirection][col] = 0;
+                                        Program.board[prev][col] = value;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } break;
             default: break;
         }
     }
