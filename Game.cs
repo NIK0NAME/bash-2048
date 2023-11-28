@@ -118,7 +118,6 @@ class Game
                         if (value != 0) {
                             bool previousMerge = false;
                             int prevPos = col - goDirection;
-                            // this.board[row][col] = 0;
 
                             for (
                                 int prev = prevPos;
@@ -159,7 +158,6 @@ class Game
                         if (value != 0) {
                             bool previousMerge = false;
                             int prevPos = row - goDirection;
-                            // this.board[row][col] = 0;
 
                             for (
                                 int prev = prevPos;
